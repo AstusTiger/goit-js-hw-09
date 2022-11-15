@@ -13,21 +13,28 @@ const secondsSpan = document.querySelector('[data-seconds]');
 startBtn.setAttribute('disabled', 'true');
 
 startBtn.addEventListener('click', () => {
-  console.log('picked date ', Date.parse(datePicker.value));
-  console.log('now ', new Date().getTime());
+  //console.log('picked date ', Date.parse(datePicker.value));
+  //console.log('now ', new Date().getTime());
 
-  console.log('remain ', Date.parse(datePicker.value) - new Date());
-  startBtn.setAttribute('disabled', 'true');
+  //console.log('remain ', Date.parse(datePicker.value) - new Date());
+  //startBtn.setAttribute('disabled', 'true');
 
-  const intervalId = setInterval(() => {
-    const remainigTime = Date.parse(datePicker.value) - new Date();
-    const { days, hours, minutes, seconds } = convertMs(remainigTime);
-    console.log(`${days}, ${hours}, ${minutes}, ${seconds}`);
-    daysSpan.textContent = days.toString().padStart(2, '0');
-    hoursSpan.textContent = hours.toString().padStart(2, '0');
-    minutesSpan.textContent = minutes.toString().padStart(2, '0');
-    secondsSpan.textContent = seconds.toString().padStart(2, '0');
-  }, 1000);
+  if (startBtn.textContent === 'Start') {
+    startBtn.textContent = 'Stop';
+    const intervalId = setInterval(() => {
+      const remainigTime = Date.parse(datePicker.value) - new Date();
+      const { days, hours, minutes, seconds } = convertMs(remainigTime);
+      //console.log(`${days}, ${hours}, ${minutes}, ${seconds}`);
+      daysSpan.textContent = days.toString().padStart(2, '0');
+      hoursSpan.textContent = hours.toString().padStart(2, '0');
+      minutesSpan.textContent = minutes.toString().padStart(2, '0');
+      secondsSpan.textContent = seconds.toString().padStart(2, '0');
+    }, 1000);
+    startBtn.dataset.intervalId = intervalId;
+  } else {
+    startBtn.textContent = 'Start';
+    clearInterval(startBtn.dataset.intervalId);
+  }
 });
 
 function convertMs(ms) {
@@ -69,5 +76,11 @@ flatpickr('#datetime-picker', {
   minuteIncrement: 1,
   onClose(selectedDates) {
     validation(selectedDates[0]);
+    clearInterval(startBtn.dataset.intervalId);
+    startBtn.textContent = 'Start';
+    daysSpan.textContent = '00'.toString().padStart(2, '0');
+    hoursSpan.textContent = '00'.toString().padStart(2, '0');
+    minutesSpan.textContent = '00'.toString().padStart(2, '0');
+    secondsSpan.textContent = '00'.toString().padStart(2, '0');
   },
 });

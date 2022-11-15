@@ -49,6 +49,8 @@ formRef.addEventListener('submit', e => {
         )
       );
   }
+
+  formRef.reset();
 });
 
 function createPromise(position, delay) {
