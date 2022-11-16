@@ -23,6 +23,11 @@ startBtn.addEventListener('click', () => {
     startBtn.textContent = 'Stop';
     const intervalId = setInterval(() => {
       const remainigTime = Date.parse(datePicker.value) - new Date();
+      if (remainigTime <= 0) {
+        stopTimer(intervalId);
+        startBtn.setAttribute('disabled', 'true');
+        return;
+      }
       const { days, hours, minutes, seconds } = convertMs(remainigTime);
       //console.log(`${days}, ${hours}, ${minutes}, ${seconds}`);
       daysSpan.textContent = days.toString().padStart(2, '0');
@@ -36,6 +41,15 @@ startBtn.addEventListener('click', () => {
     clearInterval(startBtn.dataset.intervalId);
   }
 });
+
+function stopTimer(timerId) {
+  clearInterval(timerId);
+  startBtn.textContent = 'Start';
+  daysSpan.textContent = '00'.toString().padStart(2, '0');
+  hoursSpan.textContent = '00'.toString().padStart(2, '0');
+  minutesSpan.textContent = '00'.toString().padStart(2, '0');
+  secondsSpan.textContent = '00'.toString().padStart(2, '0');
+}
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -76,11 +90,6 @@ flatpickr('#datetime-picker', {
   minuteIncrement: 1,
   onClose(selectedDates) {
     validation(selectedDates[0]);
-    clearInterval(startBtn.dataset.intervalId);
-    startBtn.textContent = 'Start';
-    daysSpan.textContent = '00'.toString().padStart(2, '0');
-    hoursSpan.textContent = '00'.toString().padStart(2, '0');
-    minutesSpan.textContent = '00'.toString().padStart(2, '0');
-    secondsSpan.textContent = '00'.toString().padStart(2, '0');
+    stopTimer(startBtn.dataset.intervalId);
   },
 });
